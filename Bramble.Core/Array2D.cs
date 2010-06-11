@@ -11,6 +11,29 @@ namespace Bramble.Core
     public class Array2D<T>
     {
         /// <summary>
+        /// Initializes a new instance of Array2D with the given dimensions.
+        /// </summary>
+        /// <param name="width">Width of the array.</param>
+        /// <param name="height">Height of the array.</param>
+        public Array2D(int width, int height)
+        {
+            if (width < 0) throw new ArgumentOutOfRangeException("Width must be greater than zero.");
+            if (height < 0) throw new ArgumentOutOfRangeException("Height must be greater than zero.");
+
+            mWidth = width;
+            mValues = new T[width * height];
+        }
+
+        /// <summary>
+        /// Initializes a new instance of Array2D with the given size.
+        /// </summary>
+        /// <param name="size">Size of the array.</param>
+        public Array2D(Vec size)
+            : this(size.X, size.Y)
+        {
+        }
+
+        /// <summary>
         /// Gets the size of the array.
         /// </summary>
         public Vec Size { get { return new Vec(Width, Height); } }
@@ -54,26 +77,15 @@ namespace Bramble.Core
         }
 
         /// <summary>
-        /// Initializes a new instance of Array2D with the given dimensions.
+        /// Fills all of the elements in the array with the given value.
         /// </summary>
-        /// <param name="width">Width of the array.</param>
-        /// <param name="height">Height of the array.</param>
-        public Array2D(int width, int height)
+        /// <param name="value">The value to fill the array with.</param>
+        public void Fill(T value)
         {
-            if (width < 0) throw new ArgumentException("Width must be greater than zero.");
-            if (height < 0) throw new ArgumentException("Height must be greater than zero.");
-
-            mWidth = width;
-            mValues = new T[width * height];
-        }
-
-        /// <summary>
-        /// Initializes a new instance of Array2D with the given size.
-        /// </summary>
-        /// <param name="size">Size of the array.</param>
-        public Array2D(Vec size)
-            : this(size.X, size.Y)
-        {
+            foreach (Vec pos in new Rect(Size))
+            {
+                this[pos] = value;
+            }
         }
 
         /// <summary>

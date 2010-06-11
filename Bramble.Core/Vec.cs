@@ -95,6 +95,17 @@ namespace Bramble.Core
             return offset.LengthSquared <= (distance * distance);
         }
 
+        /// <summary>
+        /// Initializes a new instance of Vec with the given coordinates.
+        /// </summary>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        public Vec(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
         public int X;
         public int Y;
 
@@ -126,17 +137,6 @@ namespace Bramble.Core
         /// Chebyshev distance.
         /// </summary>
         public int KingLength { get { return Math.Max(Math.Abs(X), Math.Abs(Y)); } }
-
-        /// <summary>
-        /// Initializes a new instance of Vec with the given coordinates.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        public Vec(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
 
         /// <summary>
         /// Converts this Vec to a human-readable string.

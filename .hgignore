@@ -4,7 +4,7 @@ syntax: glob
 **.DS_Store
 
 # ignore the build output
-*.*/bin/**.*
+bin/**.*
 *.*/obj/**.*
 
 # ignore other vs local stuff
