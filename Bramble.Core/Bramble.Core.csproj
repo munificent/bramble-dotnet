@@ -46,8 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Array2D.cs" />
+    <Compile Include="IndentationTree.cs" />
     <Compile Include="Int32Extensions.cs" />
     <Compile Include="Obj.cs" />
+    <Compile Include="PropSet.cs" />
+    <Compile Include="PropSetParser.cs" />
     <Compile Include="SingleExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rect.cs" />

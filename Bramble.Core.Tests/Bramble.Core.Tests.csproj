@@ -49,7 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Array2DFixture.cs" />
+    <Compile Include="IndentationTreeFixture.cs" />
     <Compile Include="Int32ExtensionsFixture.cs" />
+    <Compile Include="PropSetFixture.cs" />
+    <Compile Include="PropSetParserFixture.cs" />
     <Compile Include="SingleExtensionsFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RectFixture.cs" />
