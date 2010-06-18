@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Bramble.Core
 {
-    public static class PropSetParser
+    public static class PropertyBagParser
     {
         public static IEnumerable<string> StripEmptyLines(IEnumerable<string> lines)
         {
@@ -73,26 +73,26 @@ namespace Bramble.Core
             }
         }
 
-        public static PropSet Parse(IndentationTree tree)
+        public static PropertyBag Parse(IndentationTree tree)
         {
             if (tree == null) throw new ArgumentNullException("tree");
 
-            PropSet root = new PropSet(String.Empty, String.Empty);
+            PropertyBag root = new PropertyBag(String.Empty, String.Empty);
 
-            Stack<PropSet> parents = new Stack<PropSet>();
+            Stack<PropertyBag> parents = new Stack<PropertyBag>();
             parents.Push(root);
 
-            ParseTree(tree, parents, new Stack<PropSet>());
+            ParseTree(tree, parents, new Stack<PropertyBag>());
 
             return root;
         }
 
-        private static void ParseTree(IndentationTree tree, Stack<PropSet> parents, Stack<PropSet> abstractProps)
+        private static void ParseTree(IndentationTree tree, Stack<PropertyBag> parents, Stack<PropertyBag> abstractProps)
         {
             // temporary container for abstract properties. they can be
             // inherited from, but will not themselves be directly
             // added to the property tree
-            abstractProps.Push(new PropSet("abstract"));
+            abstractProps.Push(new PropertyBag("abstract"));
 
             foreach (IndentationTree child in tree.Children)
             {
@@ -144,7 +144,7 @@ namespace Bramble.Core
                 if (hasEquals && hasValue)
                 {
                     // fully-specified text property
-                    parents.Peek().Add(new PropSet(name, value));
+                    parents.Peek().Add(new PropertyBag(name, value));
 
                     // ignore children
                 }
@@ -164,21 +164,21 @@ namespace Bramble.Core
                         value += textChild.Text;
                     }
 
-                    parents.Peek().Add(new PropSet(name, value));
+                    parents.Peek().Add(new PropertyBag(name, value));
                 }
                 else
                 {
                     // collection property
 
                     // look up the bases from this property's prior siblings
-                    List<PropSet> bases = new List<PropSet>();
+                    List<PropertyBag> bases = new List<PropertyBag>();
 
                     foreach (string baseName in inherits)
                     {
-                        PropSet baseProp = null;
+                        PropertyBag baseProp = null;
 
                         // walk up the concrete parent stack
-                        foreach (PropSet parent in parents)
+                        foreach (PropertyBag parent in parents)
                         {
                             if (parent.Contains(baseName))
                             {
@@ -190,7 +190,7 @@ namespace Bramble.Core
                         // if a concrete one wasn't found, look for an abstract one
                         if (baseProp == null)
                         {
-                            foreach (PropSet abstractProp in abstractProps)
+                            foreach (PropertyBag abstractProp in abstractProps)
                             {
                                 if (abstractProp.Contains(baseName))
                                 {
@@ -203,7 +203,7 @@ namespace Bramble.Core
                         if (baseProp != null) bases.Add(baseProp);
                     }
 
-                    PropSet prop = new PropSet(name, bases);
+                    PropertyBag prop = new PropertyBag(name, bases);
 
                     // add it to the appropriate prop
                     if (isAbstract)

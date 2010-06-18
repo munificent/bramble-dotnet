@@ -8,26 +8,26 @@ using System.Text;
 namespace Bramble.Core
 {
     /// <summary>
-    /// Hierarchical property bag structure. Each PropSet is a dictionary of name/value pairs where each
-    /// value can either be a string or another child PropSet. In addition, each PropSet may have a
-    /// base PropSet that it will inherit (and can override) values from.
+    /// Hierarchical property bag structure. Each PropertyBag is a dictionary of name/value pairs where each
+    /// value can either be a string or another child PropertyBag. In addition, each PropertyBag may have a
+    /// base PropertyBag that it will inherit (and can override) values from.
     /// </summary>
-    public class PropSet : IEnumerable<PropSet>
+    public class PropertyBag : IEnumerable<PropertyBag>
     {
-        public static PropSet FromFile(string filePath)
+        public static PropertyBag FromFile(string filePath)
         {
             string[] lines = File.ReadAllLines(filePath, Encoding.ASCII);
 
-            IEnumerable<string> included = PropSetParser.ParseIncludes(Path.GetDirectoryName(filePath), lines);
-            IEnumerable<string> noComments = PropSetParser.StripComments(included);
-            IEnumerable<string> noWhitespace = PropSetParser.StripEmptyLines(noComments);
+            IEnumerable<string> included = PropertyBagParser.ParseIncludes(Path.GetDirectoryName(filePath), lines);
+            IEnumerable<string> noComments = PropertyBagParser.StripComments(included);
+            IEnumerable<string> noWhitespace = PropertyBagParser.StripEmptyLines(noComments);
 
             IndentationTree tree = IndentationTree.Parse(noWhitespace);
 
-            return PropSetParser.Parse(tree);
+            return PropertyBagParser.Parse(tree);
         }
 
-        public PropSet(string name, string value, IEnumerable<PropSet> baseProps)
+        public PropertyBag(string name, string value, IEnumerable<PropertyBag> baseProps)
         {
             if (name == null) throw new ArgumentNullException("name");
             if (value == null) throw new ArgumentNullException("value");
@@ -41,20 +41,20 @@ namespace Bramble.Core
             }
         }
 
-        public PropSet(string name, string value) : this(name, value, null) { }
+        public PropertyBag(string name, string value) : this(name, value, null) { }
 
-        public PropSet(string name, IEnumerable<PropSet> baseProps) : this(name, String.Empty, baseProps) { }
+        public PropertyBag(string name, IEnumerable<PropertyBag> baseProps) : this(name, String.Empty, baseProps) { }
 
-        public PropSet(string name) : this(name, String.Empty) { }
+        public PropertyBag(string name) : this(name, String.Empty) { }
 
         public bool Contains(string child)
         {
             return FlattenProperties.Contains(child);
         }
 
-        #region IEnumerable<PropSet> Members
+        #region IEnumerable<PropertyBag> Members
 
-        public IEnumerator<PropSet> GetEnumerator()
+        public IEnumerator<PropertyBag> GetEnumerator()
         {
             return FlattenProperties.GetEnumerator();
         }
@@ -70,7 +70,7 @@ namespace Bramble.Core
 
         #endregion
 
-        public PropSet this[string name]
+        public PropertyBag this[string name]
         {
             get
             {
@@ -80,7 +80,7 @@ namespace Bramble.Core
                 // recurse up the bases (in reverse order so that later items override previous ones)
                 for (int i = mBases.Count - 1; i >= 0; i--)
                 {
-                    PropSet baseProp = mBases[i];
+                    PropertyBag baseProp = mBases[i];
                     if (baseProp.Contains(name)) return baseProp[name];
                 }
 
@@ -92,7 +92,7 @@ namespace Bramble.Core
         public string Name { get { return mName; } }
         public string Value { get { return mValue; } }
 
-        public ReadOnlyCollection<PropSet> Bases { get { return new ReadOnlyCollection<PropSet>(mBases); } }
+        public ReadOnlyCollection<PropertyBag> Bases { get { return new ReadOnlyCollection<PropertyBag>(mBases); } }
 
         public int Count { get { return FlattenProperties.Count; } }
 
@@ -101,7 +101,7 @@ namespace Bramble.Core
             return Int32.Parse(mValue);
         }
 
-        public void Add(PropSet prop)
+        public void Add(PropertyBag prop)
         {
             mChildren.Add(prop);
         }
@@ -134,9 +134,9 @@ namespace Bramble.Core
                 PropSetCollection properties = new PropSetCollection();
 
                 // start with the parent properties
-                foreach (PropSet baseProp in mBases)
+                foreach (PropertyBag baseProp in mBases)
                 {
-                    foreach (PropSet child in baseProp.FlattenProperties)
+                    foreach (PropertyBag child in baseProp.FlattenProperties)
                     {
                         if (properties.Contains(child.Name)) properties.Remove(child.Name);
                         properties.Add(child);
@@ -144,7 +144,7 @@ namespace Bramble.Core
                 }
 
                 // override with the child ones
-                foreach (PropSet child in mChildren)
+                foreach (PropertyBag child in mChildren)
                 {
                     if (properties.Contains(child.Name)) properties.Remove(child.Name);
                     properties.Add(child);
@@ -154,12 +154,12 @@ namespace Bramble.Core
             }
         }
 
-        private class PropSetCollection : KeyedCollection<string, PropSet>
+        private class PropSetCollection : KeyedCollection<string, PropertyBag>
         {
-            protected override string GetKeyForItem(PropSet item) { return item.Name; }
+            protected override string GetKeyForItem(PropertyBag item) { return item.Name; }
         }
 
-        private readonly List<PropSet> mBases = new List<PropSet>();
+        private readonly List<PropertyBag> mBases = new List<PropertyBag>();
 
         private string mName;
         private string mValue;

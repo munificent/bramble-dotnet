@@ -10,7 +10,7 @@ using Bramble.Core;
 namespace Bramble.Core.Tests
 {
     [TestFixture]
-    public class PropSetFixture
+    public class PropertyBagFixture
     {
         #region Constructor
 
@@ -18,26 +18,26 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_NameValueBase_ThrowsOnNullName()
         {
-            PropSet dummy = new PropSet(null, "bar", new PropSet[] { new PropSet("base") });
+            PropertyBag dummy = new PropertyBag(null, "bar", new PropertyBag[] { new PropertyBag("base") });
         }
 
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_NameValueBase_ThrowsOnNullValue()
         {
-            PropSet dummy = new PropSet("foo", null, new PropSet[] { new PropSet("base") });
+            PropertyBag dummy = new PropertyBag("foo", null, new PropertyBag[] { new PropertyBag("base") });
         }
 
         [Test]
         public void Constructor_NameValueBase_DoesNotThrowOnNullBase()
         {
-            PropSet dummy = new PropSet("foo", "bar", null);
+            PropertyBag dummy = new PropertyBag("foo", "bar", null);
         }
 
         [Test]
         public void Constructor_NameValueBase()
         {
-            PropSet prop = new PropSet("foo", "bar", new PropSet[] { new PropSet("base") });
+            PropertyBag prop = new PropertyBag("foo", "bar", new PropertyBag[] { new PropertyBag("base") });
 
             Assert.AreEqual("foo", prop.Name);
             Assert.AreEqual("bar", prop.Value);
@@ -48,20 +48,20 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_NameValue_ThrowsOnNullName()
         {
-            PropSet dummy = new PropSet(null, "bar");
+            PropertyBag dummy = new PropertyBag(null, "bar");
         }
 
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_NameValue_ThrowsOnNullValue()
         {
-            PropSet dummy = new PropSet("foo", (string)null);
+            PropertyBag dummy = new PropertyBag("foo", (string)null);
         }
 
         [Test]
         public void Constructor_NameValue()
         {
-            PropSet prop = new PropSet("foo", "bar");
+            PropertyBag prop = new PropertyBag("foo", "bar");
 
             Assert.AreEqual("foo", prop.Name);
             Assert.AreEqual("bar", prop.Value);
@@ -71,25 +71,25 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_NameBase_ThrowsOnNullName()
         {
-            PropSet dummy = new PropSet(null, new PropSet[] { new PropSet("base") });
+            PropertyBag dummy = new PropertyBag(null, new PropertyBag[] { new PropertyBag("base") });
         }
 
         [Test]
         public void Constructor_NameBase_DoesNotThrowOnNullBase()
         {
-            PropSet dummy = new PropSet("foo", (PropSet[])null);
+            PropertyBag dummy = new PropertyBag("foo", (PropertyBag[])null);
         }
 
         [Test]
         public void Constructor_NameBase_DoesNotThrowOnEmptyBase()
         {
-            PropSet dummy = new PropSet("foo", new PropSet[0]);
+            PropertyBag dummy = new PropertyBag("foo", new PropertyBag[0]);
         }
 
         [Test]
         public void Constructor_NameBase()
         {
-            PropSet prop = new PropSet("foo", new PropSet[] { new PropSet("base") });
+            PropertyBag prop = new PropertyBag("foo", new PropertyBag[] { new PropertyBag("base") });
 
             Assert.AreEqual("foo", prop.Name);
             Assert.AreEqual(String.Empty, prop.Value);
@@ -100,13 +100,13 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_Name_ThrowsOnNull()
         {
-            PropSet dummy = new PropSet(null);
+            PropertyBag dummy = new PropertyBag(null);
         }
 
         [Test]
         public void Constructor_Name()
         {
-            PropSet prop = new PropSet("foo");
+            PropertyBag prop = new PropertyBag("foo");
 
             Assert.AreEqual("foo", prop.Name);
             Assert.AreEqual(String.Empty, prop.Value);
@@ -118,11 +118,11 @@ namespace Bramble.Core.Tests
         [Test]
         public void Add()
         {
-            PropSet prop = new PropSet("foo", "bar");
+            PropertyBag prop = new PropertyBag("foo", "bar");
 
             Assert.AreEqual(0, prop.Count);
 
-            prop.Add(new PropSet("item", "value"));
+            prop.Add(new PropertyBag("item", "value"));
 
             Assert.AreEqual(1, prop.Count);
             Assert.AreEqual("item", prop["item"].Name);
@@ -132,9 +132,9 @@ namespace Bramble.Core.Tests
         [Test]
         public void Contains()
         {
-            PropSet prop = new PropSet("foo", "bar");
+            PropertyBag prop = new PropertyBag("foo", "bar");
 
-            prop.Add(new PropSet("name", "value"));
+            prop.Add(new PropertyBag("name", "value"));
 
             Assert.IsTrue(prop.Contains("name"));
             Assert.IsFalse(prop.Contains("not name"));
@@ -143,9 +143,9 @@ namespace Bramble.Core.Tests
         [Test]
         public void GetOrDefault_String()
         {
-            PropSet prop = new PropSet("foo", "bar");
+            PropertyBag prop = new PropertyBag("foo", "bar");
 
-            prop.Add(new PropSet("name", "value"));
+            prop.Add(new PropertyBag("name", "value"));
 
             Assert.AreEqual("value", prop.GetOrDefault("name", "default"));
             Assert.AreEqual("default", prop.GetOrDefault("not name", "default"));
@@ -154,9 +154,9 @@ namespace Bramble.Core.Tests
         [Test]
         public void GetOrDefault_Int()
         {
-            PropSet prop = new PropSet("foo", "bar");
+            PropertyBag prop = new PropertyBag("foo", "bar");
 
-            prop.Add(new PropSet("name", "123"));
+            prop.Add(new PropertyBag("name", "123"));
 
             Assert.AreEqual(123, prop.GetOrDefault("name", 666));
             Assert.AreEqual(666, prop.GetOrDefault("not name", 666));
@@ -165,9 +165,9 @@ namespace Bramble.Core.Tests
         [Test]
         public void GetOrDefault_Converter()
         {
-            PropSet prop = new PropSet("foo", "bar");
+            PropertyBag prop = new PropertyBag("foo", "bar");
 
-            prop.Add(new PropSet("name", "value"));
+            prop.Add(new PropertyBag("name", "value"));
 
             Assert.AreEqual("value (added)", prop.GetOrDefault("name", value => value + " (added)", "default"));
             Assert.AreEqual("default", prop.GetOrDefault("not name", "default"));
@@ -176,14 +176,14 @@ namespace Bramble.Core.Tests
         [Test]
         public void InheritValuesFromBases()
         {
-            PropSet base1Prop = new PropSet("base1");
-            base1Prop.Add(new PropSet("from base 1", "value 1"));
+            PropertyBag base1Prop = new PropertyBag("base1");
+            base1Prop.Add(new PropertyBag("from base 1", "value 1"));
 
-            PropSet base2Prop = new PropSet("base2");
-            base2Prop.Add(new PropSet("from base 2", "value 2"));
+            PropertyBag base2Prop = new PropertyBag("base2");
+            base2Prop.Add(new PropertyBag("from base 2", "value 2"));
 
-            PropSet derivedProp = new PropSet("derived", new PropSet[] { base1Prop, base2Prop });
-            derivedProp.Add(new PropSet("from derived", "value"));
+            PropertyBag derivedProp = new PropertyBag("derived", new PropertyBag[] { base1Prop, base2Prop });
+            derivedProp.Add(new PropertyBag("from derived", "value"));
 
             Assert.AreEqual(3, derivedProp.Count);
             Assert.AreEqual("value 1", derivedProp["from base 1"].Value);
@@ -194,13 +194,13 @@ namespace Bramble.Core.Tests
         [Test]
         public void OverrideAcrossBases()
         {
-            PropSet base1Prop = new PropSet("base1");
-            base1Prop.Add(new PropSet("from base", "value 1"));
+            PropertyBag base1Prop = new PropertyBag("base1");
+            base1Prop.Add(new PropertyBag("from base", "value 1"));
 
-            PropSet base2Prop = new PropSet("base2");
-            base2Prop.Add(new PropSet("from base", "value 2"));
+            PropertyBag base2Prop = new PropertyBag("base2");
+            base2Prop.Add(new PropertyBag("from base", "value 2"));
 
-            PropSet derivedProp = new PropSet("derived", new PropSet[] { base1Prop, base2Prop });
+            PropertyBag derivedProp = new PropertyBag("derived", new PropertyBag[] { base1Prop, base2Prop });
 
             Assert.AreEqual(1, derivedProp.Count);
             Assert.AreEqual("value 2", derivedProp["from base"].Value);
@@ -209,13 +209,13 @@ namespace Bramble.Core.Tests
         [Test]
         public void OverrideValueFromBase()
         {
-            PropSet baseProp = new PropSet("base");
-            baseProp.Add(new PropSet("from base", "value"));
-            baseProp.Add(new PropSet("override", "base value"));
+            PropertyBag baseProp = new PropertyBag("base");
+            baseProp.Add(new PropertyBag("from base", "value"));
+            baseProp.Add(new PropertyBag("override", "base value"));
 
-            PropSet derivedProp = new PropSet("derived", new PropSet[] { baseProp });
-            derivedProp.Add(new PropSet("from derived", "value"));
-            derivedProp.Add(new PropSet("override", "derived value"));
+            PropertyBag derivedProp = new PropertyBag("derived", new PropertyBag[] { baseProp });
+            derivedProp.Add(new PropertyBag("from derived", "value"));
+            derivedProp.Add(new PropertyBag("override", "derived value"));
 
             Assert.AreEqual(3, derivedProp.Count);
             Assert.AreEqual("value", derivedProp["from base"].Value);

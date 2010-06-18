@@ -10,7 +10,7 @@ using Bramble.Core;
 namespace Bramble.Core.Tests
 {
     [TestFixture]
-    public class PropSetParserFixture
+    public class PropertyBagParserFixture
     {
         [TestFixtureSetUp]
         public void SetUpFixture()
@@ -51,13 +51,13 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void StripEmptyLines_ThrowsOnNull()
         {
-            IEnumerable<string> dummy = PropSetParser.StripEmptyLines(null);
+            IEnumerable<string> dummy = PropertyBagParser.StripEmptyLines(null);
         }
 
         [Test]
         public void StripEmptyLines_NoLines()
         {
-            List<string> result = new List<string>(PropSetParser.StripEmptyLines(new string[0]));
+            List<string> result = new List<string>(PropertyBagParser.StripEmptyLines(new string[0]));
 
             Assert.AreEqual(0, result.Count);
         }
@@ -78,7 +78,7 @@ namespace Bramble.Core.Tests
                 " "
             };
 
-            List<string> results = new List<string>(PropSetParser.StripEmptyLines(lines));
+            List<string> results = new List<string>(PropertyBagParser.StripEmptyLines(lines));
 
             Assert.AreEqual(5, results.Count);
 
@@ -97,13 +97,13 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void StripComments_ThrowsOnNull()
         {
-            IEnumerable<string> dummy = PropSetParser.StripComments(null);
+            IEnumerable<string> dummy = PropertyBagParser.StripComments(null);
         }
 
         [Test]
         public void StripComments_NoLines()
         {
-            List<string> result = new List<string>(PropSetParser.StripComments(new string[0]));
+            List<string> result = new List<string>(PropertyBagParser.StripComments(new string[0]));
 
             Assert.AreEqual(0, result.Count);
         }
@@ -124,7 +124,7 @@ namespace Bramble.Core.Tests
                 "single / slash and // comment"
             };
 
-            List<string> results = new List<string>(PropSetParser.StripComments(lines));
+            List<string> results = new List<string>(PropertyBagParser.StripComments(lines));
 
             Assert.AreEqual(lines.Count, results.Count);
 
@@ -148,7 +148,7 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ParseIncludes_ThrowsOnNullBasePath()
         {
-            IEnumerable<string> dummy = PropSetParser.ParseIncludes(null, new string[0]);
+            IEnumerable<string> dummy = PropertyBagParser.ParseIncludes(null, new string[0]);
 
             // needed to make sure dummy is evaluated
             int count = dummy.Count();
@@ -158,7 +158,7 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ParseIncludes_ThrowsOnNullLines()
         {
-            IEnumerable<string> dummy = PropSetParser.ParseIncludes(String.Empty, null);
+            IEnumerable<string> dummy = PropertyBagParser.ParseIncludes(String.Empty, null);
 
             // needed to make sure dummy is evaluated
             int count = dummy.Count();
@@ -215,7 +215,7 @@ namespace Bramble.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Parse_ThrowsOnNull()
         {
-            PropSet prop = PropSetParser.Parse(null);
+            PropertyBag prop = PropertyBagParser.Parse(null);
         }
 
         [Test]
@@ -223,7 +223,7 @@ namespace Bramble.Core.Tests
         {
             IndentationTree tree = IndentationTree.Parse(new string[] { "simple name = simple value" });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("simple name", "simple value"));
@@ -235,7 +235,7 @@ namespace Bramble.Core.Tests
             IndentationTree tree = IndentationTree.Parse(
                 new string[] { "!@#$%^&*-_+[]\\|{};:'\",<.>/? = !@#$%^&*-=_+[]\\|{};:'\",<.>/?" });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("!@#$%^&*-_+[]\\|{};:'\",<.>/?", "!@#$%^&*-=_+[]\\|{};:'\",<.>/?"));
@@ -258,7 +258,7 @@ namespace Bramble.Core.Tests
                     "       third",
                 });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("multi-line", "first second third"),
@@ -280,7 +280,7 @@ namespace Bramble.Core.Tests
                     "  child3"
                 });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("parent", String.Empty,
@@ -297,7 +297,7 @@ namespace Bramble.Core.Tests
             IndentationTree tree = IndentationTree.Parse(
                 new string[] { "whitespace after    =    and before  ", });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("whitespace after", "and before"));
@@ -319,7 +319,7 @@ namespace Bramble.Core.Tests
                     "other derived :: abstract base"
                 });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("base", String.Empty),
@@ -346,7 +346,7 @@ namespace Bramble.Core.Tests
                     "  foo ::"
                 });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("foo", String.Empty,
@@ -375,7 +375,7 @@ namespace Bramble.Core.Tests
                     "  spang = from c"
                 });
 
-            PropSet prop = PropSetParser.Parse(tree);
+            PropertyBag prop = PropertyBagParser.Parse(tree);
 
             AssertProp(prop, String.Empty, String.Empty,
                 AssertProp("c", String.Empty, "a,b",
@@ -398,16 +398,16 @@ namespace Bramble.Core.Tests
 
         private IList<string> ParseIncludes(params string[] lines)
         {
-            return PropSetParser.ParseIncludes(TempDir, lines).ToList();
+            return PropertyBagParser.ParseIncludes(TempDir, lines).ToList();
         }
 
-        private void AssertProp(PropSet prop, string name, string value, string baseNames, params PropAsserter[] children)
+        private void AssertProp(PropertyBag prop, string name, string value, string baseNames, params PropAsserter[] children)
         {
             PropAsserter assert = AssertProp(name, value, baseNames, children);
             assert.Test(prop);
         }
 
-        private void AssertProp(PropSet prop, string name, string value, params PropAsserter[] children)
+        private void AssertProp(PropertyBag prop, string name, string value, params PropAsserter[] children)
         {
             PropAsserter assert = AssertProp(name, value, String.Empty, children);
             assert.Test(prop);
@@ -434,7 +434,7 @@ namespace Bramble.Core.Tests
                 mChildren.AddRange(children);
             }
 
-            public void Test(PropSet prop)
+            public void Test(PropertyBag prop)
             {
                 Assert.AreEqual(mName, prop.Name);
                 Assert.AreEqual(mValue, prop.Value);
