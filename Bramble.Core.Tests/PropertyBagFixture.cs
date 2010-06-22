@@ -116,6 +116,25 @@ namespace Bramble.Core.Tests
         #endregion
 
         [Test]
+        public void StringIndexer_FindsCorrectValue()
+        {
+            PropertyBag prop = new PropertyBag("foo");
+            prop.Add(new PropertyBag("first", "one"));
+            prop.Add(new PropertyBag("second", "two"));
+
+            Assert.AreEqual("one", prop["first"].Value);
+            Assert.AreEqual("two", prop["second"].Value);
+        }
+
+        [Test]
+        public void StringIndexer_ReturnsNullOnMissing()
+        {
+            PropertyBag prop = new PropertyBag("foo");
+
+            Assert.IsNull(prop["not found"]);
+        }
+
+        [Test]
         public void Add()
         {
             PropertyBag prop = new PropertyBag("foo", "bar");
@@ -138,6 +157,25 @@ namespace Bramble.Core.Tests
 
             Assert.IsTrue(prop.Contains("name"));
             Assert.IsFalse(prop.Contains("not name"));
+        }
+
+        [Test]
+        public void TryGetValue()
+        {
+            PropertyBag prop = new PropertyBag("foo", "bar");
+            PropertyBag found = new PropertyBag("found", "value");
+            prop.Add(found);
+
+            // find one
+            PropertyBag result;
+            bool success = prop.TryGetValue("found", out result);
+            Assert.IsTrue(success);
+            Assert.AreSame(found, result);
+
+            // fail to find one
+            success = prop.TryGetValue("not found", out result);
+            Assert.IsFalse(success);
+            Assert.IsNull(result);
         }
 
         [Test]

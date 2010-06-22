@@ -106,6 +106,12 @@ namespace Bramble.Core
             mChildren.Add(prop);
         }
 
+        public bool TryGetValue(string name, out PropertyBag value)
+        {
+            value = this[name];
+            return value != null;
+        }
+
         public T GetOrDefault<T>(string name, Func<string, T> converter, T defaultValue)
         {
             if (Contains(name)) return converter(this[name].Value);
